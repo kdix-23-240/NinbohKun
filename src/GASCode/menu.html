@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <base target="_top">
+  <title>健康日記</title>
+  <?!= HtmlService.createHtmlOutputFromFile('menuStyle').getContent(); ?>
+  <style>
+    .calendar {
+      width: 100%;
+      max-width: 400px;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    .calendar th,
+    .calendar td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    .calendar th {
+      background-color: #f2f2f2;
+    }
+
+    .selected-date {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .navigation ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .navigation ul li {
+      margin: 10px 0;
+    }
+
+    .navigation ul li a {
+      text-decoration: none;
+      color: black;
+      display: flex;
+      align-items: center;
+    }
+
+    .navigation ul li a .icon {
+      margin-right: 10px;
+    }
+
+    .navigation ul button {
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="logo">
+    <h1>健康日記 healthcheck</h1>
+  </div>
+  <div class="outTitle">
+    <div class="profile">
+      <h1>プロフィール</h1>
+    </div>
+    <main>
+      <div class="header">
+        <ul>
+          <div class="itemCalendar"><a href="<?= getAppUrl() ?>?page=calendarScene">カレンダー</a></div>
+          <div class="smallContent">
+            <div class="itemHealthCheck"><a href="<?= getAppUrl() ?>?page=health">健康管理</a></div>
+            <div class="itemOthers"><a href="<?= getAppUrl() ?>?page=task">その他</a></div>
+          </div>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+  <script>
+    // 現在の日付でデフォルト値を設定
+    document.getElementById('year').value = new Date().getFullYear();
+    document.getElementById('month').value = new Date().getMonth() + 1;
+
+    // カレンダーのデータを更新する関数
+    function updateCalendar() {
+      const year = parseInt(document.getElementById('year').value, 10);
+      const month = parseInt(document.getElementById('month').value, 10);
+      google.script.run.withSuccessHandler(displayCalendar).getCalendarData(year, month);
+    }
+
+    // 日付ボタンを押した時に選択した日付を表示する関数
+    function selectDate(day) {
+      const year = document.getElementById('year').value;
+      const month = document.getElementById('month').value;
+      const selectedDate = `${year}年${month}月${day}日`;
+      document.getElementById('selected-date').textContent = `選択した日付: ${selectedDate}`;
+    }
+
+    // カレンダーを表示する関数
+    function displayCalendar(data) {
+      const calendarBody = document.getElementById('calendar-body');
+      calendarBody.innerHTML = '';
+
+      data.forEach(week => {
+        const row = document.createElement('tr');
+        week.forEach(day => {
+          const cell = document.createElement('td');
+          if (day) {
+            // 日付のボタンを作成
+            const button = document.createElement('button');
+            button.textContent = day;
+            button.onclick = () => selectDate(day); // 日付を選択
+            cell.appendChild(button);
+          }
+          row.appendChild(cell);
+        });
+        calendarBody.appendChild(row);
+      });
+    }
+
+    // 初回読み込み時にカレンダーを表示
+    updateCalendar();
+  </script>
+</body>
+
+</html>

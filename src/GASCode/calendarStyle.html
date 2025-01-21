@@ -1,0 +1,206 @@
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    display: grid;
+    grid-template-rows: 150px 1fr;
+    background-color: #52251A;
+  }
+  
+  .upperContent {
+    /* outline-style: solid; */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 1);
+    background-color: #D8D0B1;
+    border-radius: 15px;
+    width: 1000px;
+    height: 180px;
+    margin-left: 225px;
+  }
+  
+  .lowerContent {
+    padding: 10px;
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; //左と右のコンテンツを並べる 
+    column-gap: 10px; //左右コンテンツ間のスペース
+  }
+  
+  .leftContent {
+    outline-style: solid;
+    background-color: #D8D0B1;
+    border-radius: 15px;
+  }
+  
+  .calendarContent {
+   
+  }
+  
+  .calendar {
+    width: 100%;
+    max-width: 600px;
+    border-collapse: collapse;
+    margin: 20px auto;
+    background-color: #F9F4DE;//カレンダーの後ろ
+  }
+  
+  .calendar th, .calendar td {
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  .calendar .sun{
+    color: red;
+  }
+  
+  .calendar .sat{
+    color: blue;
+  }
+  
+  .calendar th {
+    background-color: #E8E2C7; //曜日の背景
+    color: #52251A;
+    width: 14.28%;
+    height: 20px;
+  }
+  
+  .calendar td {
+    text-align: center;
+    padding: 0;
+    width: 14.28%;
+    height: 80px;
+  }
+  
+  .calendar td button {
+    width: 100%;
+    height: 100%;
+    font-size: 18px;
+    border: none;
+    background-color: #F9F4DE; //日付の背景
+    cursor: pointer;
+  }
+  
+  .calendar td button:hover {
+    /* background-color: #F0F0F0; */
+    background-color: #F5C963;
+    border-radius: 100%;
+    width: 80%;
+    height: 80%;
+  }
+  
+  .rightContent {
+    
+    outline-style: solid;
+    background-color: #D8D0B1;
+    border-radius: 15px;
+    /* position: relative; */
+    
+  }
+  
+  .spreadsheet {
+    
+    font-size: 50px;
+    align-items: center;
+    justify-content: center;
+    margin:25px;
+  }
+  
+  .selected{
+    font-size: 40px;
+    height:50px;
+    margin: 30px 0 0 0; 
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .header {
+    display: flex;
+    background-color: #F9F4DE;
+    width: 300px;
+    height: 50px;
+    margin:auto;
+    padding: 5px 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+  }
+  
+  .header label{
+    margin-right: 6px;
+  }
+  
+  .header input{
+    padding: 5px 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    margin-right: 10px;
+  }
+  
+  .header button{
+    padding: 5px 10px;
+    background-color: white; 
+    border-radius: 10px;
+  }
+  
+  .selected-date {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .home {
+    background: #CFCCB3;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    justify-content: space-around;
+    align-items: center;
+     
+    width: 200px;
+    padding: 10px 25px;
+    color: #313131;
+    transition: 0.3s ease-in-out;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 60px;
+  }
+  
+  .home:hover {
+    background: #F9F4DE;
+  }
+  
+  .home:before, .home:after {
+    content: "";
+    position: absolute;
+    display: block;
+    transition: all 0.3s;
+    left: 0.6rem;
+    top: 50%;
+  }
+  
+  .home:before {
+    width: 1.4rem;
+    height: 2px;
+    background: #614f38; 
+    transform: translateY(-50%) rotate(180deg);
+  }
+  
+  .home:after {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    border-top: solid 2px currentColor;
+    border-left: solid 2px currentColor;
+    transform: translateY(-50%) rotate(-45deg);
+  }
+  
+  .home:hover:before {
+    width: 1.5rem;
+  }
+  
+  .home:hover:after {
+    opacity: 1;
+    width: 8px;
+    height: 8px;
+  }
+  
+  </style>

@@ -1,0 +1,92 @@
+<!-- //index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+      google.charts.load("current", { packages: ["corechart"] });
+
+      // GASから渡されたデータを取得
+      let rawData = JSON.parse('<?= data ?>'); // JSON文字列をパース
+
+      function drawCharts(selectedDate) {
+        const dataTemplate = {
+          温度: { index: 1, color: "#ff0000" },
+          湿度: { index: 2, color: "#00ff00" },
+          気圧: { index: 3, color: "#0000ff" },
+          タスク達成度: { index: 4, color: "#ffa500" },
+        };
+
+        const dates = rawData.slice(1).map((row) => row[0]); // ヘッダーを除いた日付列
+        const selectedIndex = dates.indexOf(selectedDate);
+        if (selectedIndex === -1) {
+          alert("選択した日付がデータに存在しません。");
+          return;
+        }
+
+        const startIndex = Math.max(1, selectedIndex - 30); // ヘッダーを除く
+        const endIndex = Math.min(rawData.length, selectedIndex + 31);
+
+        Object.keys(dataTemplate).forEach((key, i) => {
+          const data = new google.visualization.DataTable();
+          data.addColumn("string", "日付");
+          data.addColumn("number", key);
+
+          for (let j = startIndex; j < endIndex; j++) {
+            data.addRow([rawData[j][0], rawData[j][dataTemplate[key].index]]);
+          }
+
+          const options = {
+            title: key,
+            curveType: "function",
+            legend: { position: "bottom" },
+            hAxis: { title: "日付" },
+            vAxis: { title: "値" },
+            colors: [dataTemplate[key].color],
+          };
+
+          const chart = new google.visualization.LineChart(
+            document.getElementById(`chart_${i + 1}`)
+          );
+          chart.draw(data, options);
+        });
+      }
+
+      function init() {
+        const dateInput = document.getElementById("dateInput");
+        const dates = rawData.slice(1).map((row) => row[0]); // ヘッダーを除く
+
+        dateInput.addEventListener("change", () => {
+          const selectedDate = dateInput.value.replace(/-/g, "/");
+          drawCharts(selectedDate);
+        });
+
+        const defaultDate = dates[0].replace(/\//g, "-");
+        dateInput.value = defaultDate;
+        drawCharts(dates[0]);
+      }
+
+      google.charts.setOnLoadCallback(init);
+    </script>
+  </head>
+  <body>
+    <h1>スプレッドシートデータの折れ線グラフ</h1>
+    <label for="dateInput">日付: </label>
+    <input type="date" id="dateInput" />
+
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+      "
+    >
+      <div id="chart_1" style="width: 100%; height: 400px;"></div>
+      <div id="chart_2" style="width: 100%; height: 400px;"></div>
+      <div id="chart_3" style="width: 100%; height: 400px;"></div>
+      <div id="chart_4" style="width: 100%; height: 400px;"></div>
+    </div>
+  </body>
+</html>

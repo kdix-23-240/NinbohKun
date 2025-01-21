@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <?!= HtmlService.createHtmlOutputFromFile('calendarStyle').getContent(); ?>
+</head>
+
+<body>
+  <div class="upperContent">
+    <h1>月間カレンダー</h1>
+    <div class="header">
+      <label for="year">年: </label>
+      <input type="number" id="year" value="" min="1900" max="2100" placeholder="YYYY">
+      <label for="month">月: </label>
+      <input type="number" id="month" value="" min="1" max="12" placeholder="MM">
+      <button onclick="updateCalendar()">表示</button>
+    </div>
+  </div>
+  <div class="lowerContent">
+    <div class="leftContent">
+      <div class="calendarContent">
+        <table class="calendar">
+          <thead>
+            <tr>
+              <th>日</th>
+              <th>月</th>
+              <th>火</th>
+              <th>水</th>
+              <th>木</th>
+              <th>金</th>
+              <th>土</th>
+            </tr>
+          </thead>
+          <tbody id="calendar-body">
+            <!-- カレンダーの内容がここに挿入されます -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="rightContent">
+      <!-- <h2>ここにその日のデータを載せる</h2> -->
+      <div class="selected" id="selected-date">選択した日付: なし</div>
+      <div class="spreadsheet" id="spreadsheet-data">
+        気圧: <span id="temperature">なし</span><br>
+        温度: <span id="humidity">なし</span><br>
+        湿度: <span id="pressure">なし</span><br>
+        達成度: <span id="completedRate">なし</span>
+      </div>
+    </div>
+    
+  </div>
+  <a href="<?= getAppUrl() ?>?page=menu" class="home">戻る</a>
+
+  <script>
+    // 現在の日付でデフォルト値を設定
+    document.getElementById('year').value = new Date().getFullYear();
+    document.getElementById('month').value = new Date().getMonth() + 1;
+
+    // カレンダーのデータを更新する関数
+    function updateCalendar() {
+      const year = parseInt(document.getElementById('year').value, 10);
+      const month = parseInt(document.getElementById('month').value, 10);
+
+      google.script.run.withSuccessHandler(displayCalendar).getCalendarData(year, month);
+    }
+
+    function selectDate(day) {
+      const year = document.getElementById('year').value;
+      const month = document.getElementById('month').value.padStart(2, "0");
+      const selectedDate = `${year}/${month}/${day.toString().padStart(2, "0")}`; // フォーマットをYYYY/MM/DDに変更
+      const displayDateData = `${month}/${day.toString().padStart(2, "0")}`; 
+      document.getElementById('selected-date').textContent = `選択した日付: ${displayDateData}`;
+
+      // スプレッドシートデータを取得
+      fetchDataByDate(selectedDate);
+    }
+
+
+    // 日付に基づいてスプレッドシートのデータを取得
+    function fetchDataByDate(selectedDate) {
+      google.script.run.withSuccessHandler(displayDataByDate).getDataByDate(selectedDate);
+    }
+
+    function displayCalendar(data) {
+      const calendarBody = document.getElementById('calendar-body');
+      calendarBody.innerHTML = '';
+
+      data.forEach(week => {
+        const row = document.createElement('tr');
+        week.forEach(day => {
+          const cell = document.createElement('td');
+          if (day) {
+            // 日付のボタンを作成
+            const button = document.createElement('button');
+            button.textContent = day;
+            button.onclick = () => selectDate(day); // 日付を選択
+            cell.appendChild(button);
+          }
+          row.appendChild(cell);
+        });
+        calendarBody.appendChild(row);
+      });
+    }
+
+    // データを表示する関数
+    function displayDataByDate(data) {
+      if (data) {
+        document.getElementById('temperature').textContent = data.temperature+"hPa";
+        document.getElementById('humidity').textContent = data.humidity+"℃";
+        document.getElementById('pressure').textContent = data.pressure+"%";
+        document.getElementById('completedRate').textContent = data.completedRate+"%";
+      } else {
+        document.getElementById('temperature').textContent = "なし";
+        document.getElementById('humidity').textContent = "なし";
+        document.getElementById('pressure').textContent = "なし";
+        document.getElementById('completedRate').textContent = "なし";
+      }
+    }
+
+    // カレンダーを初期表示
+    updateCalendar();
+  </script>
+</body>
+
+</html>
